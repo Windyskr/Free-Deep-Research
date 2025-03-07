@@ -3,10 +3,12 @@ import { Message } from '../types';
 /**
  * Generates conversation history with system prompt and clarifying questions request
  * @param userInput The user's query input
+ * @param searchResults Initial search results
  * @returns Array of messages for the conversation
  */
 export function generateClarifyingQuestionsPrompt(
-  userInput: string
+  userInput: string,
+  searchResults: { title: string; url: string; content: string }[] = []
 ): Message[] {
   const currentDate = new Date().toISOString();
 
@@ -23,16 +25,26 @@ export function generateClarifyingQuestionsPrompt(
   - Mistakes erode my trust, so be accurate and thorough.
   - Provide detailed explanations, I'm comfortable with lots of detail.
   - Value good arguments over authorities, the source is irrelevant.
+  - Decline to discuss controversial topics about real people, especially celebrities and political figures.
   - Consider new technologies and contrarian ideas, not just the conventional wisdom.
   - You may use high levels of speculation or prediction, just flag it for me.`,
     },
     {
       role: 'user',
-      content: `Given the following query from the user, ask up to 3 follow up questions to clarify the research direction. The questions should help you better understand what the user is looking for. If the original query is already clear enough, you can ask fewer questions or proceed directly with the research. user's query is wrapped in <userQuery> </userQuery>:
+      content: `Given the following query from the user and initial search results, ask up to 1-5 follow up questions to clarify the research direction. The questions should help you better understand what the user is looking for. If the original query is already clear enough, you can ask fewer questions or proceed directly with the research. Consider the initial search results when formulating your questions to make them more specific and relevant.
 
 <userQuery>
 ${userInput}
 </userQuery>
+
+<initialSearchResults>
+${searchResults.map(result => `
+<result>
+<title>${result.title}</title>
+<content>${result.content}</content>
+</result>
+`).join('\n')}
+</initialSearchResults>
 
 Respond in the language that was used in the query. If the query is in Chinese, respond in Chinese. If the query is in English, respond in English, and so on. Add appropriate spaces between Chinese and Latin characters / numbers to improve readability.`,
     },
@@ -59,12 +71,13 @@ export const generateResearchPrompt = (
 - Mistakes erode my trust, so be accurate and thorough.
 - Provide detailed explanations, I'm comfortable with lots of detail.
 - Value good arguments over authorities, the source is irrelevant.
+- Decline to discuss controversial topics about real people, especially celebrities and political figures.
 - Consider new technologies and contrarian ideas, not just the conventional wisdom.
 - You may use high levels of speculation or prediction, just flag it for me.`,
     },
     {
       role: 'user',
-      content: `Given the following prompt from the user, generate a list of SERP queries to research the topic. Return a maximum of 2 queries, but feel free to return less if the original prompt is clear. Make sure each query is unique and not similar to each other: 
+      content: `Given the following prompt from the user, generate a list of SERP queries to research the topic. Return a maximum of 5 queries, but feel free to return less if the original prompt is clear. Make sure each query is unique and not similar to each other: 
 
 <userQuery>
 ${userQuery}
@@ -79,7 +92,7 @@ ${userClarificationResponses}
 </userClarificationResponses>
 
 Here are some learnings from previous research, use them to generate more specific queries: 
-You MUST respond in JSON matching this JSON schema: {"type":"object","properties":{"queries":{"type":"array","items":{"type":"object","properties":{"query":{"type":"string","description":"The SERP query."},"researchGoal":{"type":"string","description":"First talk about the goal of the research that this query is meant to accomplish, then go deeper into how to advance the research once the results are found, mention additional research directions. Be as specific as possible, especially for additional research directions. JSON reserved words should be escaped."}},"required":["query","researchGoal"],"additionalProperties":false},"description":"List of SERP queries, max of 2"}},"required":["queries"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}
+You MUST respond in JSON matching this JSON schema: {"type":"object","properties":{"queries":{"type":"array","items":{"type":"object","properties":{"query":{"type":"string","description":"The SERP query."},"researchGoal":{"type":"string","description":"First talk about the goal of the research that this query is meant to accomplish, then go deeper into how to advance the research once the results are found, mention additional research directions. Be as specific as possible, especially for additional research directions. JSON reserved words should be escaped."}},"required":["query","researchGoal"],"additionalProperties":false},"description":"List of SERP queries, max of 5"}},"required":["queries"],"additionalProperties":false,"$schema":"http://json-schema.org/draft-07/schema#"}
 
 Respond in the language that was used in the query. If the query is in Chinese, respond in Chinese. If the query is in English, respond in English, and so on. Add appropriate spaces between Chinese and Latin characters / numbers to improve readability.`,
     },
@@ -104,6 +117,7 @@ export const generateResearchLearning = (
 - Mistakes erode my trust, so be accurate and thorough.
 - Provide detailed explanations, I'm comfortable with lots of detail.
 - Value good arguments over authorities, the source is irrelevant.
+- Decline to discuss controversial topics about real people, especially celebrities and political figures.
 - Consider new technologies and contrarian ideas, not just the conventional wisdom.
 - You may use high levels of speculation or prediction, just flag it for me.`,
     },
@@ -145,6 +159,7 @@ export const generateResearchResults = (
 - Mistakes erode my trust, so be accurate and thorough.
 - Provide detailed explanations, I'm comfortable with lots of detail.
 - Value good arguments over authorities, the source is irrelevant.
+- Decline to discuss controversial topics about real people, especially celebrities and political figures.
 - Consider new technologies and contrarian ideas, not just the conventional wisdom.
 - You may use high levels of speculation or prediction, just flag it for me.`,
     },

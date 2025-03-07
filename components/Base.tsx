@@ -602,7 +602,28 @@ content: ${source.content}
     // Generate appropriate prompt based on current step
     switch (step) {
       case 'query':
-        conversationHistory = generateClarifyingQuestionsPrompt(userInput);
+        // Perform initial search
+        const initialSearchResults = await handleInitialSearch(userInput);
+        
+        // Create initial message with search results
+        const initialMessage: Message = {
+          step: 'query',
+          role: 'user',
+          content: userInput,
+          source: initialSearchResults
+        };
+        
+        // Update messages with search results
+        setMessages((prev) => {
+          const newMessages = structuredClone(prev);
+          if (newMessages.length > 0) {
+            newMessages[0] = initialMessage;
+          }
+          return newMessages;
+        });
+        refMessages.current[0] = initialMessage;
+        
+        conversationHistory = generateClarifyingQuestionsPrompt(userInput, initialSearchResults);
         // Move to clarify step after initial query
         updateStep('clarify');
         break;
@@ -632,6 +653,30 @@ content: ${source.content}
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  };
+
+  const handleInitialSearch = async (query: string): Promise<SearchResult[]> => {
+    try {
+      const searchRes = await fetch(
+        `${NEXT_PUBLIC_SEARCH_URL}?q=` + encodeURIComponent(query)
+      );
+
+      if (!searchRes.ok) {
+        throw new Error(
+          `Search request failed with status: ${searchRes.status}`
+        );
+      }
+
+      const searchResJson = await searchRes.json();
+      return searchResJson.results?.map((result: any) => ({
+        title: result.title || 'No Title',
+        url: result.url || '',
+        content: result.content || 'No content available',
+      })) || [];
+    } catch (error) {
+      console.error('Error in initial search:', error);
+      return [];
     }
   };
 
