@@ -198,22 +198,22 @@ const BaseContent = () => {
 
   const onAIBtnClick = () => {
     openUrl(
-      'https://github.com/Winyskr/free-deep-research/README.md',
-      'https://github.com/Winyskr/free-deep-research/README.md'
+      'https://github.com/Windyskr/Free-Deep-Research/blob/main/README_zh-CN.md',
+      'https://github.com/Windyskr/Free-Deep-Research/blob/main/README_zh-CN.md'
     );
   };
 
   const onGithubBtnClick = () => {
     openUrl(
-      'https://github.com/Winyskr/free-deep-research',
-      'https://github.com/Winyskr/free-deep-research'
+      'https://github.com/Windyskr/Free-Deep-Research',
+      'https://github.com/Windyskr/Free-Deep-Research'
     );
   };
 
   const onDeployBtnClick = () => {
     openUrl(
-      'https://github.com/Winyskr/free-deep-research/README.md',
-      'https://github.com/Winyskr/free-deep-research/README.md'
+      'https://github.com/Windyskr/Free-Deep-Research/blob/main/README_zh-CN.md',
+      'https://github.com/Windyskr/Free-Deep-Research/blob/main/README_zh-CN.md'
     );
   };
 
