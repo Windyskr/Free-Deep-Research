@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 interface SearchResult {
   query: string;
   results: {

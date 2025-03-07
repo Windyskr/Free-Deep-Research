@@ -32,12 +32,12 @@ interface ResearchResponse {
 const NEXT_PUBLIC_BASE_URL =
   process.env.NODE_ENV === 'development'
     ? process.env.NEXT_PUBLIC_BASE_URL!
-    : '/v1/chat/completions';
+    : '/api/v1/chat/completions';
 
 const NEXT_PUBLIC_SEARCH_URL =
   process.env.NODE_ENV === 'development'
     ? process.env.NEXT_PUBLIC_SEARCH_URL!
-    : '/search';
+    : '/api/search';
 
 const BaseContent = () => {
   const [userInput, setUserInput] = useState('');
