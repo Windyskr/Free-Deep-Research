@@ -2,7 +2,11 @@
 
 [English](/README.md)
 
-## 快速开始
+## 快速部署在 Cloudflare Pages
+
+[https://github.com/Windyskr/Free-Deep-Research/issues/1](https://github.com/Windyskr/Free-Deep-Research/issues/1)
+
+## 本地开发
 
 首先，在根目录创建 .env 文件
 ```

@@ -2,6 +2,10 @@
 
 [中文](/README_zh-CN.md)
 
+## Deploy on Cloudflare Pages
+
+[https://github.com/Windyskr/Free-Deep-Research/issues/1](https://github.com/Windyskr/Free-Deep-Research/issues/1)
+
 ## Getting Started
 
 First, create a .env file in root
